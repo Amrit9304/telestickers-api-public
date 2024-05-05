@@ -20,69 +20,68 @@ const cacheControl = require('express-cache-controller')
 
 const cors = require('cors')
 
-const sharp = require('sharp')
-
 const cachedLinks = { }
 
 app.use(cacheControl())
 app.use(cors())
 
-app.get("/pack/:name", async (req, res) => {
-  var packRaw
+
+const { URL } = require('url');
+
+app.get("/telesticker", async (req, res) => {
+  const stickerSetUrl = req.query.url;
+
+  if (!stickerSetUrl) {
+    res.status(400).send({ error: "URL parameter 'url' is required." });
+    return;
+  }
+
+  const parsedUrl = new URL(stickerSetUrl);
+  const name = parsedUrl.pathname.split('/').pop();
+
+  var packRaw;
 
   try {
-    packRaw = await bot.getStickerSet(req.params.name)
+    packRaw = await bot.getStickerSet(name);
   } catch(e) {
-    res.status(500)
-    res.send({ error: "Something bad happened. Try again later." })
-    return
+    res.status(500).send({ error: "Something bad happened. Try again later." });
+    return;
   }
 
   res.cacheControl = {
     maxAge: 120,
     public: true
-  }
+  };
 
   var pack = {
     name: packRaw.title,
     masks: packRaw.contains_masks,
-    stickers: packRaw.stickers.map(sticker => {
-      return {
-        id: sticker.file_id,
-        size: sticker.file_size,
-        width: sticker.width,
-        height: sticker.height,
-        emoji: sticker.emoji,
-        mask_position: sticker.mask_position
-      }
-    })
-  }
+    stickers: packRaw.stickers.map(sticker => `http://localhost:3000/sticker/${sticker.file_id}.webp`)
+  };
 
-  res.send(pack)
-})
+  res.send(pack);
+});
 
-app.get("/sticker/:id.png", async (req, res) => {
-  var stickerPng
+app.get("/sticker/:id.webp", async (req, res) => {
+  var stickerWebp;
 
   try {
-    const stickerUrl = cachedLinks[req.params.id] || (cachedLinks[req.params.id] = await bot.getFileLink(req.params.id))
-    const stickerWebp = await cache.getImage(stickerUrl)
-  
-    stickerPng = await sharp(stickerWebp).toFormat("png").toBuffer()
+    const stickerUrl = cachedLinks[req.params.id] || (cachedLinks[req.params.id] = await bot.getFileLink(req.params.id));
+    stickerWebp = await cache.getImage(stickerUrl);
   } catch(e) {
-    res.setHeader("Content-Type", "image/jpeg")
-    res.status(500)
-    res.sendFile(path.join(__dirname, "static", "500.jpg"))
-    return
+    res.setHeader("Content-Type", "image/jpeg");
+    res.status(500);
+    res.sendFile(path.join(__dirname, "static", "500.jpg"));
+    return;
   }
 
   res.cacheControl = {
     maxAge: parseInt(config.CACHE_TIME),
     public: true
-  }
+  };
 
-  res.setHeader("Content-Type", "image/png")
-  res.send(stickerPng)
-})
+  res.setHeader("Content-Type", "image/webp");
+  res.send(stickerWebp);
+});
 
 app.listen(process.env.PORT || 3000)

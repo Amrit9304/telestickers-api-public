@@ -9,7 +9,7 @@ It is suitable for public use -- no API tokens are required.
 ## Features
 
 - Public sticker API
-- Automatically handles WebP -> PNG conversion
+- Gives in .webp format
 - Aggressive file caching for fast response times
 - Pre-set CORS headers -- use it in client-side JS immediately
 
@@ -19,7 +19,7 @@ Create `config.json`:
 
 ```json
 {
-  "BOT_TOKEN": "Something",
+  "BOT_TOKEN": "<YOUR_BOT_TOKEN>",
   "CACHE_TIME": 3600
 }
 ```
@@ -36,15 +36,11 @@ In production, you can use environment variables instead of `config.json`.
 Then, simply use these endpoints:
 
 ```
-GET /pack/:name
-GET /sticker/:id.png
+GET https://oni-chan-unique-api.vercel.app/telesticker?url=
 ```
 
 Examples:
-- https://stickers.horner.tj/pack/Animals
-- https://stickers.horner.tj/sticker/CAADAgAD3gAD9HsZAAG9he9u98XOPQI.png
-
-**(Please do not use stickers.horner.tj in production. It is not stable and may go down at any time. It is simply for demonstration purposes.)**
+- https://oni-chan-unique-api.vercel.app/telesticker?url=https://t.me/addstickers/CenterOfEmoji14132840
 
 ## Docker
 

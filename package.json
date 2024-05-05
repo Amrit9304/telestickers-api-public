@@ -11,10 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.16.4",
+    "express": "^4.19.2",
     "express-cache-controller": "^1.1.0",
-    "node-telegram-bot-api": "^0.30.0",
-    "request": "^2.88.0",
-    "sharp": "^0.21.3"
+    "node-telegram-bot-api": "^0.65.1",
+    "request": "^2.88.2",
+    "sharp": "^0.33.3"
   }
 }
