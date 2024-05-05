@@ -56,7 +56,7 @@ app.get("/telesticker", async (req, res) => {
   var pack = {
     name: packRaw.title,
     masks: packRaw.contains_masks,
-    stickers: packRaw.stickers.map(sticker => `http://localhost:3000/sticker/${sticker.file_id}.webp`)
+    stickers: packRaw.stickers.map(sticker => `https://oni-chan-unique-api.vercel.app/sticker/${sticker.file_id}.webp`)
   };
 
   res.send(pack);
